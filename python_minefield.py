@@ -82,6 +82,11 @@ class SpaceShooter(arcade.Window):
         arcade.start_render()
         self.all_sprites.draw()
 
+        if self.dead:
+            arcade.draw_text('GAME OVER', self.width // 2, self.height // 2,
+                             arcade.color.DARK_MAGENTA, 50, align='center',
+                             anchor_x='center', anchor_y='center')
+
     def on_update(self, delta_time: float):
         if self.paused:
             return
