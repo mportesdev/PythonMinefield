@@ -37,7 +37,7 @@ class SpaceShooter(arcade.Window):
         self.dead = False
 
     def add_mine(self, delta_time: float):
-        if self.paused:
+        if self.paused or self.dead:
             return
 
         mine = FlyingSprite(random.choice(('images/mine_violet_small.png',
@@ -52,7 +52,7 @@ class SpaceShooter(arcade.Window):
         self.all_sprites.append(mine)
 
     def add_missile(self, delta_time: float):
-        if self.paused:
+        if self.paused or self.dead:
             return
 
         missile = FlyingSprite('images/missile.png')
@@ -64,7 +64,7 @@ class SpaceShooter(arcade.Window):
         self.all_sprites.append(missile)
 
     def add_cloud(self, delta_time: float):
-        if self.paused:
+        if self.paused or self.dead:
             return
 
         cloud = FlyingSprite(random.choice(('images/cloud_violet.png',
@@ -87,13 +87,15 @@ class SpaceShooter(arcade.Window):
             return
 
         if self.dead:
-            try:
-                self.player.alpha -= 3
-            except OverflowError:
+            self.dead_counter -= 1
+            if self.dead_counter == 0:
                 arcade.close_window()
+            for sprite in self.all_sprites:
+                sprite.alpha = max(0, sprite.alpha - 2)
 
-        if self.player.collides_with_list(self.mines_list):
+        if self.player.collides_with_list(self.mines_list) and not self.dead:
             self.dead = True
+            self.dead_counter = 160
 
         for s in self.all_sprites:
             s.center_x += s.change_x * delta_time
